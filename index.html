@@ -49,6 +49,11 @@
             return { board, resetBoard, placeMarker, checkWin }; 
         })();
     
-    
+        const Player = (name, marker) => {
+            return { name, marker }; // Return player object with name and marker
+        };
+
+        const player1 = Player('Player 1', 'X'); // Create Player 1
+        const player2 = Player('Player 2', 'O'); // Create Player 2
 </script>
 </html>
