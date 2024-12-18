@@ -3,10 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
     <title>Document</title>
 </head>
 <body>
-    
+    <div id="gameboard"></div>
+    <button id="restart">Restart</button>
+    <div id="result"></div>
 </body>
 <script>
     const Gameboard = (() => {
@@ -55,7 +58,7 @@
 
         const player1 = Player('Player 1', 'X'); 
         const player2 = Player('Player 2', 'O'); 
-        const GameController = (() => {
+          const GameController = (() => {
             let currentPlayer = player1; // Start with Player 1
             let gameOver = false; // Game is not over at the start
 
@@ -84,5 +87,38 @@
             return { handleTurn, resetGame }; // Expose functions for handling turns and resetting the game
         })();
 
+        const renderBoard = () => {
+            const gameboardElement = document.getElementById('gameboard');
+            gameboardElement.innerHTML = ''; // Clear existing contents of the gameboard
+
+            Gameboard.board.forEach((marker, index) => {
+                const cell = document.createElement('div');
+                cell.textContent = marker || ''; // Display the marker or empty string
+                cell.className = 'cell'; // Add class to the cell
+                cell.dataset.index = index; // Use data attribute to store the index
+                gameboardElement.appendChild(cell); // Add the cell to the gameboard
+
+                cell.addEventListener('click', () => {
+                    GameController.handleTurn(index); // Handle a turn when a cell is clicked
+                    renderBoard(); // Re-render the board after a turn
+                    checkGameEnd(); // Check if the game has ended after each turn
+                });
+            });
+        };
+
+        const checkGameEnd = () => {
+            const result = Gameboard.checkWin(); // Check for win or tie
+            const resultElement = document.getElementById('result');
+            if (result) {
+                resultElement.textContent = result === 'Tie' ? "It's a Tie!" : `${result} wins!`; // Display result
+            }
+        };
+        document.getElementById('restart').addEventListener('click',()=>{
+            GameController.resetGame();
+            renderBoard();
+            document.getElementById('result').textContent = '';
+        });
+
+        renderBoard();
 </script>
 </html>
