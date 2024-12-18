@@ -50,10 +50,39 @@
         })();
     
         const Player = (name, marker) => {
-            return { name, marker }; // Return player object with name and marker
+            return { name, marker }; 
         };
 
-        const player1 = Player('Player 1', 'X'); // Create Player 1
-        const player2 = Player('Player 2', 'O'); // Create Player 2
+        const player1 = Player('Player 1', 'X'); 
+        const player2 = Player('Player 2', 'O'); 
+        const GameController = (() => {
+            let currentPlayer = player1; // Start with Player 1
+            let gameOver = false; // Game is not over at the start
+
+            const switchPlayer = () => {
+                currentPlayer = (currentPlayer === player1) ? player2 : player1; // Toggle between players
+            };
+
+            const handleTurn = (index) => {
+                if (!gameOver && Gameboard.placeMarker(index, currentPlayer.marker)) {
+                    const result = Gameboard.checkWin();
+                    if (result) {
+                        gameOver = true; // Set gameOver to true if game has ended
+                        console.log(result === 'Tie' ? "It's a Tie!" : `${result} wins!`); // Log the result to console
+                    } else {
+                        switchPlayer(); // Switch to the other player if the game continues
+                    }
+                }
+            };
+
+            const resetGame = () => {
+                Gameboard.resetBoard(); // Reset the gameboard
+                gameOver = false; // Allow play to continue
+                currentPlayer = player1; // Reset to Player 1
+            };
+
+            return { handleTurn, resetGame }; // Expose functions for handling turns and resetting the game
+        })();
+
 </script>
 </html>
